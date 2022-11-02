@@ -1,0 +1,27 @@
+.main{
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    width: auto;
+    /* background-color: black; */
+}
+.icon{
+    /* height: 10%; */
+    width: 30%;
+}
+.nav{
+    border: 2px solid black;
+    padding: 2px 2px;
+    width: 80vw;
+    /* background-color: aqua; */
+    font-size: 1.7rem;
+    align-self:center;
+    margin-left: -20%;
+}
+.navItem{
+    margin:0% 5%;
+}
+
+.nav a {
+    text-decoration:brown;
+}
