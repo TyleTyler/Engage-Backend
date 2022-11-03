@@ -1,0 +1,21 @@
+<%-include("./partials/header.ejs")%>
+<body>
+    <%-include("./partials/navbar.ejs") %>
+    <% studList.forEach((student) =>{ %> 
+        <h1><%=student.firstName%>  <%=student.lastName%> </h1>
+        <div class="studentinfo">
+            <div> Class of <%=student.grade%> </div>
+            <div> Email: <%=student.email%> </div>
+        </div>
+        <div class="event">
+            <div>Current Points: <%=student.points%></div>
+            <div>Overall Points: <%=student.sumPoints%></div>
+            <ul>Events Attended:
+                <% student.eventsAttended.forEach((event)=>{ %>
+                    <li><%=event%></li>
+                <%}) %> 
+            </ul>
+        </div>
+        <% }) %> 
+</body>
+</html>
