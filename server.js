@@ -14,6 +14,8 @@ mongoose.connect(dbUri).then((res) =>{
     app.listen(3000)
 }).catch("Could not connect")
 
+
+
 app.set("view engine", 'ejs')
 app.use(routes)
 

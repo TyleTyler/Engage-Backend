@@ -2,7 +2,36 @@
 <body>
     <%-include("./partials/navbar.ejs") %>
     <form action = "/save-student" method = "POST" >
-        <input type="text" name="firstName" placeholder="First Name">
+        <input type="text" name="firstName" placeholder="First Name" required>
+        <input type="text" name="lastName" placeholder="Last Name" required>
+        <label for="grade">Year of Graduation</label>
+        <select name="grade" value="Year of Graduation " required>
+            <% let date = new Date() %> 
+            <option value = "<%=date.getFullYear() + 1%>"><%=date.getFullYear() + 1%> </option>
+            <option value = "<%=date.getFullYear() + 2%>"><%=date.getFullYear() + 2%> </option>
+            <option value = "<%=date.getFullYear() + 3%>"><%=date.getFullYear() + 3%> </option>
+            <option value = "<%=date.getFullYear() + 4%>"><%=date.getFullYear() + 4%> </option>
+            <option value = "<%=date.getFullYear() + 5%>"><%=date.getFullYear() + 5%> </option>
+            <option value = "<%=date.getFullYear() + 6%>"><%=date.getFullYear() + 6%> </option>
+            <option valsue = "<%=date.getFullYear() + 7%>"><%=date.getFullYear() + 7%> </option>
+        </select>
+        <input type="text" name="idNum" placeholder="ID #" id="ID" required>
+        <script>
+            let idNum = document.getElementById("ID");
+            let numCheck = /[^0-9]+/;
+            idNum.onkeypress = function(e) {
+            e = e || window.event;
+            var charCode = (typeof e.which == "undefined") ? e.keyCode : e.which;
+            var charStr = String.fromCharCode(charCode);
+            if (numCheck.test(charStr)) {
+             return false;
+            }
+            if(idNum.value.length === 6){
+                return false;
+            }
+};
+        </script> 
+        <input type="email" name="email" placeholder="Student Email" required>
        <button> Save Student</button>
     </form> 
 

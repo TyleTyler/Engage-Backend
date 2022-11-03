@@ -1,3 +1,6 @@
+:root{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
 .main{
     display: flex;
     flex-direction: row;
@@ -10,13 +13,21 @@
     width: 30%;
 }
 .nav{
+    
     border: 2px solid black;
-    padding: 2px 2px;
     width: 80vw;
     /* background-color: aqua; */
-    font-size: 1.7rem;
+    font-size: 1.3rem;
     align-self:center;
     margin-left: -20%;
+}
+.nav a, a:visited{
+    text-decoration: none;
+    color:black
+}
+.nav a:hover{
+
+    color: rgb(255, 70, 70);
 }
 .navItem{
     margin:0% 5%;
@@ -24,4 +35,8 @@
 
 .nav a {
     text-decoration:brown;
+}
+.infoHub{
+    display: flex;
+    flex-direction: column;
 }

@@ -18,10 +18,7 @@ const studentSchema = new Schema({
         type : Number,
         required : true
     },
-    email : {
-        type : String,
-        required : true
-    },
+    email : mongoose.Mixed,
     points : {
         type : Number,
         default : 0
@@ -31,7 +28,8 @@ const studentSchema = new Schema({
         default : 0
     },
     eventsAttended : {
-        type : String,
+        type : Array,
+        default : []
     }
 })
 
