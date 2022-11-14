@@ -1,3 +1,6 @@
+//Setting up the "Event" Model and its Properties
+
+
 const mongoose =require('mongoose')
 const eventSchema = mongoose.Schema({
     eventName: {

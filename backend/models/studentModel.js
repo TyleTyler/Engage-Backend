@@ -1,3 +1,5 @@
+//Setting up the "Student" model and its properties
+
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -16,6 +18,10 @@ const studentSchema = new Schema({
     },
     idNum : {
         type : Number,
+        required : true
+    },
+    dateOfBirth : {
+        type : Date,
         required : true
     },
     email : mongoose.Mixed,
