@@ -8,25 +8,21 @@ const dbUri = process.env.DBURI
 const bp = require('body-parser')
 
 
-app.use((req, res, next) => {
-    console.log(req.path, req.method)
-    next()
-})
-
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-
-
-app.use('/api/MERN/Students', sRoutes )
-app.use('/api/MERN/Events' , eRoutes )
-
-
 
 mongoose.connect(dbUri, () =>{
 app.listen(process.env.PORT, ()=>{
     console.log("Listening")
 })})
 
-console.log(process.env.PORT)
+app.use('/api/MERN/Students', sRoutes )
+app.use('/api/MERN/Events' , eRoutes )
+
+app.use((req, res) =>{
+    res.send("This is not a page")
+})
+
+
 
 

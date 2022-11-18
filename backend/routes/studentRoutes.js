@@ -1,11 +1,14 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const { getAllStudents, getOneStudent, deleteStudent, updateStudent } = require('./routeFunction')
+const { getAllStudents, getOneStudent, deleteStudent, updateStudent, getTopTen, postStudent } = require('./routeFunction')
 const router = express.Router()
 const Student = require("../models/studentModel")
 
 //End point to get all students
 router.get('/', (req, res)=> getAllStudents(req, res))
+
+//End point to get top ten students
+router.get('/top10', (req, res) => getTopTen(req,res))
 
 //End point to get individual student or students with similar matching "anything"
 router.get('/:param', (req, res) => getOneStudent(req, res))
@@ -19,4 +22,7 @@ router.patch('/:id/:eventId', (req, res) => updateStudent(req, res))
 
 
 
+
+//End point to create a student
+router.post('/', (req, res)=> postStudent(req, res))
 module.exports = router

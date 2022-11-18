@@ -20,6 +20,19 @@ let getOneEvent =  (req, res) =>{
     })
 }
 
+let getFutureEvents = async (req, res) =>{
+    let currentDate = new Date()
+    let eventList = await Event.find().sort({eventDate : "desc"})
+    let futureEvents = []
+
+    eventList.forEach(event =>{
+        if(event.eventDate >= currentDate){
+            futureEvents.push(event)
+        }
+    })
+
+    res.json({futureEvents : futureEvents})
+}
 let createEvent = (req, res) =>{
     registerEvent(req.body).then((data)=>{
         res.status(200).json({msg: "Saved " + req.body.eventName})
@@ -101,5 +114,25 @@ let updateStudent = async (req, res)=>{
     
 }
 
+let getTopTen = async (req, res) =>{
+    let data  = await Student.find().sort({sumPoints : "desc"})
+    let rankMap = [];
+    for(let i = 0; i < 10; i++){
+        rankMap.push(data[i])
+    }
+    res.json(rankMap)
+}
+
+let postStudent = (req, res) => {
+    console.log(req.body)
+    registerStudent(req.body).then((data)=>{
+        res.status(200).json({msg: `Saved ${req.body.firstName} ${req.body.lastName}`})
+    }).catch(e =>{
+        res.status(400).json({
+            error: e
+        })
+    })
+}
+
 module.exports = { getAllEvents , getOneEvent , createEvent, getAllStudents,
-    getOneStudent, deleteStudent, updateStudent  }
+    getOneStudent, deleteStudent, updateStudent, getTopTen , postStudent, getFutureEvents  }
