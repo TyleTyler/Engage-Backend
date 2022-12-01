@@ -1,9 +1,13 @@
 const Student = require('./models/studentModel')
-
+const Event = require('./models/eventModel')
 
 //Function to add a student to the "Students" Collection
 const registerStudent = async (s) =>{
-    
+    const {eventsAttended} = s
+    if(eventsAttended){
+        const totalPoints = await getTotal(eventsAttended)
+        s = {...s, points : totalPoints, sumPoints : totalPoints}
+    }
     let nStudent = new Student(s)
     try{   
         await nStudent.save()
@@ -14,7 +18,16 @@ const registerStudent = async (s) =>{
     return nStudent
 }
 
-const Event = require('./models/eventModel')
+
+//Function for register page, gets total points of "Events already attended"
+const getTotal = async (eventList) => {
+    let points = 0
+    for(let i = 0; i < eventList.length; i++){
+        let nEvent = await Event.findById(eventList[i])
+        points += nEvent.pointWorth
+    }
+    return points
+}
 
 
 //Fucntion to add an event to the "Events" Collection 
@@ -31,3 +44,5 @@ const registerEvent = async (e) =>{
 }
 
 module.exports = { registerStudent , registerEvent }
+
+

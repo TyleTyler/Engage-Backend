@@ -12,15 +12,12 @@ const studentSchema = new Schema({
         type : String,
         required : true
     },
-    grade : {
-        type : Number,
-        required : true
-    },
+    grade: mongoose.Mixed, 
     idNum : {
         type : Number,
         required : true
     },
-    dateOfBirth : {
+    dob : {
         type : Date,
         required : true
     },

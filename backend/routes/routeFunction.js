@@ -3,6 +3,7 @@ const { registerStudent }= require('../db')
 const { registerEvent } = require('../db')
 const mongoose = require('mongoose')
 const Event = require("../models/eventModel")
+const student = require("../models/studentModel")
 
 
 let getAllEvents = (req, res) =>{
@@ -17,6 +18,21 @@ let getOneEvent =  (req, res) =>{
     Event.findById(id)
     .then((event) =>{
         res.json(event)
+    })
+}
+
+let getPossibleEvents = (req, res) =>{
+    let name = req.params.name
+    let possibleNames = []
+    Event.find()
+    .then(events =>{
+        events.forEach(event =>{
+            console.log(event)
+            if(event.eventName.toLowerCase().includes(name.toLowerCase())){
+                possibleNames.push(event)
+            }
+        })
+        res.send(possibleNames)
     })
 }
 
@@ -40,6 +56,22 @@ let createEvent = (req, res) =>{
         res.status(400).json({
             error: e
         })
+    })
+}
+
+let getFilteredEvents = (req, res) =>{
+    
+    let filters = req.params.id.indexOf(",") == -1 ? req.params.id.split(".") : req.params.id.split(",").map( e=> e.split("."))
+    // console.log(filters)
+    Event.find().sort([filters]).then( fEvents =>{
+        res.json(fEvents)
+    })}
+
+let getFilteredStuds = (req, res) =>{
+
+    let filters = req.params.name.indexOf(",") == -1 ? req.params.name.split(".") : req.params.name.split(",").map( e=> e.split("."))
+    Student.find().sort([filters]).then( fEvents =>{
+        res.json(fEvents)
     })
 }
 
@@ -94,26 +126,6 @@ let deleteStudent = (req, res)=>{
         })
     })
 }
-
-let updateStudent = async (req, res)=>{
-    let id = req.params.id
-    let eId = req.params.eventId
-
-    let nEvent = await Event.findById(eId)
-    Student.findById(id). then((data) =>{
-        data.eventsAttended.push(nEvent)
-        data.points += nEvent.pointWorth
-        data.sumPoints  += nEvent.pointWorth
-        data.save()
-        console.log( data.eventsAttended , data.points, data.sumPoints)
-    }).catch(e =>{
-        res.json({
-            msg : "Couldn't update student"
-        })
-    })
-    
-}
-
 let getTopTen = async (req, res) =>{
     let data  = await Student.find().sort({sumPoints : "desc"})
     let rankMap = [];
@@ -123,8 +135,29 @@ let getTopTen = async (req, res) =>{
     res.json(rankMap)
 }
 
-let postStudent = (req, res) => {
-    console.log(req.body)
+let updateStudent = async (req, res)=>{
+    let id = req.params != null ? req.params.id : req
+    let eId = req.params != null ? req.params.eventId : res
+
+    let nEvent = await Event.findById(eId)
+    Student.findById(id).then((data) =>{
+        if(!(data.eventsAttended.includes(nEvent))){
+            data.eventsAttended.push(nEvent)
+        }
+        console.log(data.points)
+        console.log(nEvent.pointWorth)
+        data.points += nEvent.pointWorth
+        data.sumPoints  += nEvent.pointWorth
+        data.save()
+    }).catch(e =>{
+        res.json({
+            msg : "Couldn't update student"
+        })
+    })
+}
+
+
+let postStudent = async (req, res) => {
     registerStudent(req.body).then((data)=>{
         res.status(200).json({msg: `Saved ${req.body.firstName} ${req.body.lastName}`})
     }).catch(e =>{
@@ -135,4 +168,5 @@ let postStudent = (req, res) => {
 }
 
 module.exports = { getAllEvents , getOneEvent , createEvent, getAllStudents,
-    getOneStudent, deleteStudent, updateStudent, getTopTen , postStudent, getFutureEvents  }
+    getOneStudent, deleteStudent, updateStudent, getTopTen , postStudent, getFutureEvents, getFilteredEvents,
+    getPossibleEvents, getFilteredStuds  }
