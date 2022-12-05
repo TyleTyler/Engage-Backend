@@ -21,6 +21,22 @@ let getOneEvent =  (req, res) =>{
     })
 }
 
+let getListofEvents = async (req, res) =>{
+    let list = req.params.list.split(".")
+    let eventList = []
+    Event.find().then(events=>{
+        events.forEach(e =>{
+            list.forEach(id =>{
+                if(e._id == id){
+                    eventList.push(e)
+                }
+            })
+        })
+        res.json(eventList)
+    })
+    
+}
+
 let getPossibleEvents = (req, res) =>{
     let name = req.params.name
     let possibleNames = []
@@ -82,37 +98,35 @@ let getAllStudents = (req, res)=>{
         })
     })
 }
-let getOneStudent = (req, res) =>{
+let getOneStudent = async (req, res) =>{
     let numCheck = /\d/g
     let parameter = req.params.param
-    console.log(numCheck.test(parameter))
-    
-    if(!(numCheck.test(parameter))){
-        Student.find({firstName : parameter}).then((student) =>{
-            res.json({
-                student: student
-            })
-        })
-        .catch(e =>{
-            res.json({
-                error : "Student does not exist"
-                })
-            }
-        )        
+    let rankList = await Student.find().sort({sumPoints : "desc"})
+    let i = 0;
+    while(rankList[i].idNum != parameter){
+        i++
     }
-    else{
-        Student.findById(parameter).then((student) =>{
-            res.json({
-                student: student
+
+    Student.find({idNum : parameter}).then((student) =>{
+        res.json({...student, rank : i + 1})
+    })
+    .catch(e =>{
+        res.json({
+            error : "Student does not exist"
             })
-        })
-        .catch(e=>{
-            res.json({
-                error: "Error getting student"
-                })   
-            }
-        ) 
-    } 
+        }
+    )        
+    // else{
+    //     Student.findById(parameter).then((student) =>{
+    //         res.json(student)
+    //     })
+    //     .catch(e=>{
+    //         res.json({
+    //             error: "Error getting student"
+    //             })   
+    //         }
+    //     ) 
+    // } 
 }
 
 let deleteStudent = (req, res)=>{
@@ -169,4 +183,4 @@ let postStudent = async (req, res) => {
 
 module.exports = { getAllEvents , getOneEvent , createEvent, getAllStudents,
     getOneStudent, deleteStudent, updateStudent, getTopTen , postStudent, getFutureEvents, getFilteredEvents,
-    getPossibleEvents, getFilteredStuds  }
+    getPossibleEvents, getFilteredStuds , getListofEvents  }

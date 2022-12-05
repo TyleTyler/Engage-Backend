@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { getAllEvents, getOneEvent, createEvent, getFutureEvents, getFilteredEvents, getPossibleEvents } = require('./routeFunction')
+const { getAllEvents, getOneEvent, createEvent, getFutureEvents, getFilteredEvents, getPossibleEvents, getListofEvents } = require('./routeFunction')
 
 //End point to display every event
 router.get("/", (req,res) => getAllEvents(req,res))
@@ -12,6 +12,8 @@ router.get("/future", (req, res)=> getFutureEvents(req, res))
 router.get("/:id", (req, res) => getOneEvent(req,res))
 
 router.get("/filter/:id", (req, res) => getFilteredEvents(req, res))
+
+router.get("/list/:list", (req, res) => getListofEvents(req, res))
 
 router.get("/name/:name", (req, res) => getPossibleEvents(req, res))
 
