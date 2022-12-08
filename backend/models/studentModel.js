@@ -12,7 +12,10 @@ const studentSchema = new Schema({
         type : String,
         required : true
     },
-    grade: mongoose.Mixed, 
+    grade : {
+        type : Number, 
+        required : true,
+    } ,
     idNum : {
         type : Number,
         required : true

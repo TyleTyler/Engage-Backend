@@ -43,7 +43,7 @@ let getPossibleEvents = (req, res) =>{
     Event.find()
     .then(events =>{
         events.forEach(event =>{
-            console.log(event)
+            // console.log(event)
             if(event.eventName.toLowerCase().includes(name.toLowerCase())){
                 possibleNames.push(event)
             }
@@ -51,6 +51,7 @@ let getPossibleEvents = (req, res) =>{
         res.send(possibleNames)
     })
 }
+
 
 let getFutureEvents = async (req, res) =>{
     let currentDate = new Date()
@@ -75,20 +76,61 @@ let createEvent = (req, res) =>{
     })
 }
 
-let getFilteredEvents = (req, res) =>{
+let getFilteredEvents = async (req, res) =>{
+    let filters = [];
+    let params = req.params.id.indexOf(",") == -1 ? req.params.id.split(".") : req.params.id.split(",").map( e=> e.split("."))
+    filters.push(params[0])
+    filters.push(params[1])
+    console.log(filters)
+    let finalEvents = []
+
+    const sortedEvents = await  Event.find().sort([filters])
+    if(params[2]){
+        let name = params[2].toString()
+        for(event of sortedEvents){
+            if(event.eventName.toLowerCase().includes(name.toLowerCase())){
+                finalEvents.push(event)
+            }
+        }   
+    }
+    console.log("___________________    ")
+    res.json(finalEvents.length >= 1 ? finalEvents : sortedEvents)
     
-    let filters = req.params.id.indexOf(",") == -1 ? req.params.id.split(".") : req.params.id.split(",").map( e=> e.split("."))
-    // console.log(filters)
-    Event.find().sort([filters]).then( fEvents =>{
-        res.json(fEvents)
-    })}
+    // Event.find().sort([filters]).then( fEvents =>{
+    //     if(params[2]){
+    //         let name = params[2].toString()
+    //         let event = await Event.find()
+    //         Event.find()
+    //         .then(events =>{
+    //             events.forEach(event =>{
+    //                 if(event.eventName.toLowerCase().includes(name.toLowerCase())){
+    //                     // console.log(name)
+    //                     finalEvents.push(event)
+    //                 }
+    //             })
+    //         }) 
+    //     }
+        // console.log(finalEvents)
 
-let getFilteredStuds = (req, res) =>{
+}
 
-    let filters = req.params.name.indexOf(",") == -1 ? req.params.name.split(".") : req.params.name.split(",").map( e=> e.split("."))
-    Student.find().sort([filters]).then( fEvents =>{
-        res.json(fEvents)
-    })
+let getFilteredStuds = async (req, res) =>{
+
+    let filters = [];
+    let finalStuds =[];
+    let studParam = req.params.name.indexOf(",") == -1 ? req.params.name.split(".") : req.params.name.split(",").map(e=> e.split("."))
+    filters.push(studParam[0])
+    filters.push(studParam[1])
+    const studs = await Student.find().sort([filters])
+    if(studParam[2]){
+        let name = studParam[2].toString()
+        for(students of studs){
+            if(students.firstName.toLowerCase().includes(name.toLowerCase())){
+                finalEvents.push(event)
+            }
+        }   
+    }
+    res.json(studs)
 }
 
 let getAllStudents = (req, res)=>{
@@ -98,13 +140,18 @@ let getAllStudents = (req, res)=>{
         })
     })
 }
+
+
+
 let getOneStudent = async (req, res) =>{
     let numCheck = /\d/g
     let parameter = req.params.param
     let rankList = await Student.find().sort({sumPoints : "desc"})
     let i = 0;
-    while(rankList[i].idNum != parameter){
-        i++
+    for(rank of rankList){
+        if(rank.idNum != parameter){
+            i++
+        } 
     }
 
     Student.find({idNum : parameter}).then((student) =>{
@@ -180,6 +227,7 @@ let postStudent = async (req, res) => {
         })
     })
 }
+
 
 module.exports = { getAllEvents , getOneEvent , createEvent, getAllStudents,
     getOneStudent, deleteStudent, updateStudent, getTopTen , postStudent, getFutureEvents, getFilteredEvents,
