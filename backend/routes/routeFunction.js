@@ -118,19 +118,21 @@ let getFilteredStuds = async (req, res) =>{
 
     let filters = [];
     let finalStuds =[];
-    let studParam = req.params.name.indexOf(",") == -1 ? req.params.name.split(".") : req.params.name.split(",").map(e=> e.split("."))
-    filters.push(studParam[0])
-    filters.push(studParam[1])
+    let studParam = req.params.name.split(",").map(e=> e.split("."))
+    console.log(studParam)
+    filters.push(studParam[0][0])
+    filters.push(studParam[0][1])
     const studs = await Student.find().sort([filters])
-    if(studParam[2]){
-        let name = studParam[2].toString()
+    if(studParam[1]){
+        let name = studParam[1].toString()
         for(students of studs){
-            if(students.firstName.toLowerCase().includes(name.toLowerCase())){
-                finalEvents.push(event)
+            if(students.firstName.toLowerCase().includes(name.toLowerCase()) ||students.lastName.toLowerCase().includes(name.toLowerCase())  ){
+                finalStuds.push(students)
             }
         }   
+        console.log(finalStuds)
     }
-    res.json(studs)
+    res.json(finalStuds.length >= 1 ? finalStuds : studs)
 }
 
 let getAllStudents = (req, res)=>{
