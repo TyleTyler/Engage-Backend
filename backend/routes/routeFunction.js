@@ -4,6 +4,48 @@ const { registerEvent } = require('../db')
 const mongoose = require('mongoose')
 const Event = require("../models/eventModel")
 const student = require("../models/studentModel")
+const date = (new Date).toLocaleDateString()
+if(date == "1/24/2022" || date == "4/10/2022"){
+    Student.aggregate([
+        {
+            $set:{
+                totalPoints : { $add : ["$totalPoints", "$points"]},
+                points : 0
+            }
+        }
+    ])
+}else{
+    console.log("Today is " + date+ ", it is not yet the end of the quater")
+}
+
+
+const getRankedStuds = async (filters) =>{
+    let studs = {};
+    if(filters){
+        studs = await Student.find().sort([filters])
+    }
+    else{
+        studs = await Student.aggregate([
+            {
+                $addFields : {
+                    rankPoints : {$divide : [{$add:["$points", "$sumPoints"]},2]}
+                }
+            },
+            {
+                $setWindowFields:{
+                    sortBy :{"rankPoints" : -1},
+                    output:{
+                        rank: {
+                            $rank : {}
+                        }
+                    }
+                }
+            }
+        ])
+        console.log(studs)z
+    }
+   return (studs)
+}
 
 
 let getAllEvents = (req, res) =>{
@@ -119,10 +161,11 @@ let getFilteredStuds = async (req, res) =>{
     let filters = [];
     let finalStuds =[];
     let studParam = req.params.name.split(",").map(e=> e.split("."))
-    console.log(studParam)
     filters.push(studParam[0][0])
     filters.push(studParam[0][1])
-    const studs = await Student.find().sort([filters])
+    const studs = await getRankedStuds()
+    console.log(studs)
+
     if(studParam[1]){
         let name = studParam[1].toString()
         for(students of studs){
@@ -149,15 +192,12 @@ let getOneStudent = async (req, res) =>{
     let numCheck = /\d/g
     let parameter = req.params.param
     let rankList = await Student.find().sort({sumPoints : "desc"})
-    let i = 0;
-    for(rank of rankList){
-        if(rank.idNum != parameter){
-            i++
-        } 
-    }
-
-    Student.find({idNum : parameter}).then((student) =>{
-        res.json({...student, rank : i + 1})
+    getRankedStuds().then(students => {
+        for(stud of students){
+           if(stud.idNum == parameter){
+            res.json(stud)
+           }
+        }
     })
     .catch(e =>{
         res.json({
@@ -165,17 +205,6 @@ let getOneStudent = async (req, res) =>{
             })
         }
     )        
-    // else{
-    //     Student.findById(parameter).then((student) =>{
-    //         res.json(student)
-    //     })
-    //     .catch(e=>{
-    //         res.json({
-    //             error: "Error getting student"
-    //             })   
-    //         }
-    //     ) 
-    // } 
 }
 
 let deleteStudent = (req, res)=>{
@@ -231,6 +260,8 @@ let postStudent = async (req, res) => {
 }
 
 
+
+
 module.exports = { getAllEvents , getOneEvent , createEvent, getAllStudents,
     getOneStudent, deleteStudent, updateStudent, getTopTen , postStudent, getFutureEvents, getFilteredEvents,
-    getPossibleEvents, getFilteredStuds , getListofEvents  }
+    getPossibleEvents, getFilteredStuds , getListofEvents, getRankedStuds  }

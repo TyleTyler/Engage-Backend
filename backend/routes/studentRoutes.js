@@ -1,11 +1,13 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const { getAllStudents, getOneStudent, deleteStudent, updateStudent, getTopTen, postStudent, getFilteredStuds } = require('./routeFunction')
+const { getAllStudents, getOneStudent, deleteStudent, updateStudent, getTopTen, postStudent, getFilteredStuds, getRankedStuds } = require('./routeFunction')
 const router = express.Router()
 const Student = require("../models/studentModel")
 
 //End point to get all students
 router.get('/', (req, res)=> getAllStudents(req, res))
+
+router.get("/ranked", (req, res)=>getRankedStuds(req, res))
 
 //End point to get top ten students
 router.get('/top10', (req, res) => getTopTen(req,res))
@@ -15,6 +17,7 @@ router.get('/:param', (req, res) => getOneStudent(req, res))
 
 //End point to get filtered students
 router.get("/filter/:name", (req, res) => getFilteredStuds(req, res))
+
 
 //End point to delete a student
 router.delete('/:id', (req, res)=> deleteStudent(req, res))
