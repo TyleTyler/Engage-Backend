@@ -20,31 +20,26 @@ if(date == "1/24/2022" || date == "4/10/2022"){
 
 
 const getRankedStuds = async (filters) =>{
-    let studs = {};
-    if(filters){
-        studs = await Student.find().sort([filters])
-    }
-    else{
-        studs = await Student.aggregate([
-            {
-                $addFields : {
-                    rankPoints : {$divide : [{$add:["$points", "$sumPoints"]},2]}
-                }
-            },
-            {
-                $setWindowFields:{
-                    sortBy :{"rankPoints" : -1},
-                    output:{
-                        rank: {
-                            $rank : {}
-                        }
+    let studs = await Student.aggregate([
+        {
+            $addFields : {
+                rankPoints : {$divide : 
+                    [{$add:["$points", {$divide:["$sumPoints",2]}]},2]}
+            }
+        },
+        {
+            $setWindowFields:{
+                sortBy :{"rankPoints" : -1},
+                output:{
+                    rank: {
+                        $rank : {}
                     }
                 }
             }
-        ])
-        console.log(studs)z
-    }
-   return (studs)
+        }
+    ])
+    console.log(studs)
+    return (studs)
 }
 
 
@@ -160,11 +155,15 @@ let getFilteredStuds = async (req, res) =>{
 
     let filters = [];
     let finalStuds =[];
-    let studParam = req.params.name.split(",").map(e=> e.split("."))
-    filters.push(studParam[0][0])
-    filters.push(studParam[0][1])
-    const studs = await getRankedStuds()
-    console.log(studs)
+    let studParam;
+    if(req){
+        studParam = req.params.name.split(",").map(e=> e.split("."))
+        filters.push(studParam[0][0])
+        filters.push(studParam[0][1])
+    }
+
+    const studs = await getRankedStuds(filters.length >= 1 ? filters : false )
+   
 
     if(studParam[1]){
         let name = studParam[1].toString()
@@ -192,7 +191,7 @@ let getOneStudent = async (req, res) =>{
     let numCheck = /\d/g
     let parameter = req.params.param
     let rankList = await Student.find().sort({sumPoints : "desc"})
-    getRankedStuds().then(students => {
+    getRankedStuds(false).then(students => {
         for(stud of students){
            if(stud.idNum == parameter){
             res.json(stud)
@@ -227,7 +226,7 @@ let getTopTen = async (req, res) =>{
     res.json(rankMap)
 }
 
-let updateStudent = async (req, res)=>{
+let updateStudentEvents = async (req, res)=>{
     let id = req.params != null ? req.params.id : req
     let eId = req.params != null ? req.params.eventId : res
 
@@ -248,6 +247,36 @@ let updateStudent = async (req, res)=>{
     })
 }
 
+let updateStudentInfo = async (req, res)=>{
+    let id = req.params.id
+    let {updateParams} = req.params 
+   
+    if(updateParams.indexOf(".") != -1){
+       updateParams = updateParams.split(".").map( e =>{ return e.split(",")})
+       updateParams.forEach(e =>{
+         let tempParam ={}
+         tempParam[e[0]] = e[1]
+         Student.findOneAndUpdate({idNum : id}, {
+            $set: tempParam
+        }).then(e=>{console.log("Updated Stud")})
+        })
+
+        
+    }else{
+        updateParams = updateParams.split(",")
+        let tempParam ={}
+        tempParam[updateParams[0]] = updateParams[1]
+        Student.findOneAndUpdate({idNum : id}, {
+            $set: tempParam
+        }).then(e=>{console.log("Updated Stud")})
+    }
+
+    Student.findOne({idNum : id})
+    .then(updatedStud => {
+        res.json(updatedStud)
+    })
+
+}
 
 let postStudent = async (req, res) => {
     registerStudent(req.body).then((data)=>{
@@ -260,8 +289,12 @@ let postStudent = async (req, res) => {
 }
 
 
+let getRanks = (req, res)=>{
+  getRankedStuds().then(studs =>{res.json(studs)})
+}
+
 
 
 module.exports = { getAllEvents , getOneEvent , createEvent, getAllStudents,
-    getOneStudent, deleteStudent, updateStudent, getTopTen , postStudent, getFutureEvents, getFilteredEvents,
-    getPossibleEvents, getFilteredStuds , getListofEvents, getRankedStuds  }
+    getOneStudent, deleteStudent, updateStudentEvents, getTopTen , postStudent, getFutureEvents, getFilteredEvents,
+    getPossibleEvents, getFilteredStuds , getListofEvents, getRankedStuds, getRanks, updateStudentInfo}
