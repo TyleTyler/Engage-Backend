@@ -93,6 +93,7 @@ let getListofEvents = async (req, res) =>{
                 }
             })
         })
+        console.log(eventList)
         res.json(eventList)
     })
     
@@ -200,10 +201,10 @@ let getAllStudents = (req, res)=>{
 let getOneStudent = async (req, res) =>{
     let numCheck = /\d/g
     let parameter = req.params.param
-    let rankList = await Student.find().sort({sumPoints : "desc"})
     getRankedStuds(false).then(students => {
         for(stud of students){
            if(stud.idNum == parameter){
+            // console.log(stud)
             res.json(stud)
            }
         }
