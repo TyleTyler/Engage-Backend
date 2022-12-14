@@ -20,25 +20,49 @@ if(date == "1/24/2022" || date == "4/10/2022"){
 
 
 const getRankedStuds = async (filters) =>{
-    let studs = await Student.aggregate([
-        {
-            $addFields : {
-                rankPoints : {$divide : 
-                    [{$add:["$points", {$divide:["$sumPoints",2]}]},2]}
-            }
-        },
-        {
-            $setWindowFields:{
-                sortBy :{"rankPoints" : -1},
-                output:{
-                    rank: {
-                        $rank : {}
+    let studs
+    console.log(filters)
+    if(filters)
+        { studs = await Student.aggregate([
+            {
+                $addFields : {
+                    rankPoints : {$divide : 
+                        [{$add:["$points", {$divide:["$sumPoints",2]}]},2]}
+                }
+            },
+            {
+                $setWindowFields:{
+                    sortBy : filters,
+                    output:{
+                        rank: {
+                            $rank : {}
+                        }
                     }
                 }
             }
+        ])
+    }else{
+            { studs = await Student.aggregate([
+                {
+                    $addFields : {
+                        rankPoints : {$divide : 
+                            [{$add:["$points", {$divide:["$sumPoints",2]}]},2]}
+                    }
+                },
+                {
+                    $setWindowFields:{
+                        sortBy :{"rankPoints" : -1},
+                        output:{
+                            rank: {
+                                $rank : {}
+                            }
+                        }
+                    }
+                }
+            ])
         }
-    ])
-    console.log(studs)
+    }
+    // console.log(studs)
     return (studs)
 }
 
@@ -133,36 +157,22 @@ let getFilteredEvents = async (req, res) =>{
     console.log("___________________    ")
     res.json(finalEvents.length >= 1 ? finalEvents : sortedEvents)
     
-    // Event.find().sort([filters]).then( fEvents =>{
-    //     if(params[2]){
-    //         let name = params[2].toString()
-    //         let event = await Event.find()
-    //         Event.find()
-    //         .then(events =>{
-    //             events.forEach(event =>{
-    //                 if(event.eventName.toLowerCase().includes(name.toLowerCase())){
-    //                     // console.log(name)
-    //                     finalEvents.push(event)
-    //                 }
-    //             })
-    //         }) 
-    //     }
-        // console.log(finalEvents)
-
 }
 
 let getFilteredStuds = async (req, res) =>{
 
     let filters = [];
     let finalStuds =[];
+    let finalFilter = {}
     let studParam;
     if(req){
         studParam = req.params.name.split(",").map(e=> e.split("."))
         filters.push(studParam[0][0])
         filters.push(studParam[0][1])
+        finalFilter[filters[0]] = parseInt(filters[1])
     }
-
-    const studs = await getRankedStuds(filters.length >= 1 ? filters : false )
+ 
+    const studs = await getRankedStuds(filters.length >= 1 ? finalFilter : false )
    
 
     if(studParam[1]){
@@ -172,7 +182,7 @@ let getFilteredStuds = async (req, res) =>{
                 finalStuds.push(students)
             }
         }   
-        console.log(finalStuds)
+        // console.log(finalStuds)
     }
     res.json(finalStuds.length >= 1 ? finalStuds : studs)
 }
