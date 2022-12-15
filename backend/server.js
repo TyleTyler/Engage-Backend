@@ -11,6 +11,12 @@ const bp = require('body-parser')
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
+app.use(cors({
+    origin:["http://localhost:4000", 
+    "https://mern-task-app,onredner.com"]
+    })
+)
+
 mongoose.connect(dbUri, () =>{
 app.listen(process.env.PORT, ()=>{
     console.log("Listening")
