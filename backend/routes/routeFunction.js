@@ -20,8 +20,7 @@ if(date == "1/24/2022" || date == "4/10/2022"){
 
 
 const getRankedStuds = async (filters) =>{
-    let studs
-    console.log(filters)
+    let studs;
     if(filters)
         { studs = await Student.aggregate([
             {
@@ -85,18 +84,11 @@ let getOneEvent =  (req, res) =>{
 let getListofEvents = async (req, res) =>{
     let list = req.params.list.split(".")
     let eventList = []
-    Event.find().then(events=>{
-        events.forEach(e =>{
-            list.forEach(id =>{
-                if(e._id == id){
-                    eventList.push(e)
-                }
-            })
-        })
-        console.log(eventList)
-        res.json(eventList)
-    })
-    
+    for(id of list){
+        let event = await Event.findById(id)
+        eventList.push(event)
+    }
+    res.json(eventList)
 }
 
 let getPossibleEvents = (req, res) =>{
@@ -204,7 +196,7 @@ let getOneStudent = async (req, res) =>{
     getRankedStuds(false).then(students => {
         for(stud of students){
            if(stud.idNum == parameter){
-            // console.log(stud)
+            console.log(stud)
             res.json(stud)
            }
         }
