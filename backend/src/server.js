@@ -13,7 +13,7 @@ app.use(express.urlencoded({extended:true}))
 
 app.use(cors({
     origin:["http://localhost:4000", 
-    "https://mern-task-app,onredner.com"]
+    "https://mern-task-app,onrender.com"]
     })
 )
 
