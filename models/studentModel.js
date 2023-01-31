@@ -1,4 +1,5 @@
 //Setting up the "Student" model and its properties
+/**/
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema

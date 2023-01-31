@@ -6,21 +6,23 @@ const express = require("express")
 const app = express()
 const dbUri = process.env.DBURI
 const bp = require('body-parser')
-
+//t
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.use(cors({
-    origin:["http://localhost:4000", 
-    "https://mern-task-app,onrender.com"]
-    })
-)
-
+// app.use(cors({
+//     origin:["http://localhost:4000", 
+//     "https://mern-task-app,onrender.com"]
+//     })
+// )
+mongoose.set('strictQuery', false)
 mongoose.connect(dbUri, () =>{
-app.listen(process.env.PORT || 4000, ()=>{
+app.listen(process.env.PORT, ()=>{
     console.log("Listening")
 })})
+
+
 
 app.use('/api/MERN/Students', sRoutes )
 app.use('/api/MERN/Events' , eRoutes )
