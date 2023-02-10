@@ -5,6 +5,9 @@ const mongoose = require('mongoose')
 const Event = require("../models/eventModel")
 const student = require("../models/studentModel")
 const date = (new Date).toLocaleDateString()
+
+
+//!This function is to reset the Students points at the end of the quarter
 if(date == "1/24/2022" || date == "4/10/2022"){
     Student.aggregate([
         {

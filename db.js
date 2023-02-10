@@ -1,14 +1,17 @@
 const Student = require('./models/studentModel')
 const Event = require('./models/eventModel')
 
-//Function to add a student to the "Students" Collection
-const registerStudent = async (s) =>{
-    const {eventsAttended} = s
+//?This function takes in a student JSON parameter and upload it to the database
+const registerStudent = async (student) =>{
+    /* 
+    *If the eventsAttended property is found in the student parameter
+    * it will be added to their total points*/
+    const {eventsAttended} = student
     if(eventsAttended){
         const totalPoints = await getTotal(eventsAttended)
-        s = {...s, points : totalPoints, sumPoints : totalPoints}
+        student = {...student, points : totalPoints, sumPoints : totalPoints}
     }
-    let nStudent = new Student(s)
+    let nStudent = new Student(student)
     try{   
         await nStudent.save()
     }
@@ -19,7 +22,8 @@ const registerStudent = async (s) =>{
 }
 
 
-//Function for register page, gets total points of "Events already attended"
+//?This function intakes an array list of eventID's
+//*It returns the total amount of points of all the events together
 const getTotal = async (eventList) => {
     let points = 0
     for(let i = 0; i < eventList.length; i++){
@@ -30,17 +34,18 @@ const getTotal = async (eventList) => {
 }
 
 
-//Fucntion to add an event to the "Events" Collection 
-const registerEvent = async (e) =>{
+//?This function takes in a json body with the event model
+//*This function returns the same json body if saved successfully 
+const registerEvent = async (event) =>{
     
-    let nEvent = new Event(e)
+    let newEvent = new Event(event)
     try{   
-        await nEvent.save()
+        await newEvent.save()
     }
-    catch(e){
+    catch(error){
         throw("Could not save Event")
     }
-    return nEvent
+    return newEvent
 }
 
 module.exports = { registerStudent , registerEvent }

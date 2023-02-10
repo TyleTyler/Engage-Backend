@@ -4,29 +4,29 @@ const { getAllStudents, getOneStudent, deleteStudent, updateStudentEvents, getTo
 const router = express.Router()
 const Student = require("../models/studentModel")
 
-//End point to get all students
+//This end point returns a list of all possible students
 router.get('/', (req, res)=> getAllStudents(req, res))
 
-//End point to get top ten students
+//This end point returns a list of the top 10 (of all time) students
 router.get('/top10', (req, res) => getTopTen(req,res))
 
-//End point to get individual student or students with similar matching "anything"
+//This end point returns a specific student //?Given a name, id, or id#
 router.get('/:param', (req, res) => getOneStudent(req, res))
 
-//End point to get filtered students
+//This end point retuns a list of filtered students //?Given an array of filters
 router.get("/filter/:name", (req, res) => getFilteredStuds(req, res))
 
 
-//End point to delete a student
+//This end point deletes a student //?Given a student database id
 router.delete('/:id', (req, res)=> deleteStudent(req, res))
 
-//End point to edit a Students attentance at an event (Points are inherit)
+//This end point updates a student participation at any event //?Given a student and event databaseID
 router.patch('/:id/:eventId', (req, res) => updateStudentEvents(req, res))
 
-//End point to edit a students basic info
+//This end point updates a students basic info //?Given a student databseID and a json body 
 router.patch('/update/:id/:updateParams' , (req, res) => updateStudentInfo(req,res))
 
 
-//End point to create a student
+//This end point creates a student //?Given a json body based around student model
 router.post('/', (req, res)=> postStudent(req, res)) 
 module.exports = router

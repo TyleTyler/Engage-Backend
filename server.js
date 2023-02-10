@@ -17,6 +17,8 @@ app.use(express.urlencoded({extended:true}))
 //     })
 // )
 mongoose.set('strictQuery', false)
+
+//Connecting to the database and starting server
 mongoose.connect(dbUri, () =>{
 app.listen(process.env.PORT, ()=>{
     console.log("Listening")
