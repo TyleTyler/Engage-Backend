@@ -6,8 +6,10 @@ const express = require("express")
 const app = express()
 const dbUri = process.env.DBURI
 const bp = require('body-parser')
-//t
-
+const cors = require('cors')
+app.use(cors({
+    origin:"http://localhost:3000"
+}))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
