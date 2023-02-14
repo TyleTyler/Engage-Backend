@@ -13,11 +13,6 @@ app.use(cors({
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-// app.use(cors({
-//     origin:["http://localhost:4000", 
-//     "https://mern-task-app,onrender.com"]
-//     })
-// )
 mongoose.set('strictQuery', false)
 mongoose.connect(dbUri, () =>{
 app.listen(process.env.PORT, ()=>{
