@@ -8,7 +8,7 @@ const dbUri = process.env.DBURI
 const bp = require('body-parser')
 const cors = require('cors')
 app.use(cors({
-    origin:"https://fblaproj-api.onrender.com/api/MERN/Students/top10"
+    origin:"https://fblaproj-api.onrender.com/"
 }))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
